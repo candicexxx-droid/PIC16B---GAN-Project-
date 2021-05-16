@@ -1,6 +1,5 @@
-import numpy as np
-from gan import GAN
 import tensorflow as tf
+from gan import GAN
 
 class_names = [
     'airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse',
