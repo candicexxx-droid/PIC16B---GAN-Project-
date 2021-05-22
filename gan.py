@@ -1,14 +1,19 @@
+import os
 import numpy as np
-from keras import datasets, optimizers, models, layers, Sequential
+from keras import optimizers, models, layers, Sequential
+from keras.preprocessing.image import load_img
 import matplotlib.pyplot as plt
 
 
-# TODO: binary cross-entropy
 class GAN:
-    def __init__(self, batch_size, lr, label, alpha, epochs):
+    """
+    Generative Adversarial Network class used to load a cat dataset and
+    train a model.
+    """
+    def __init__(self, batch_size, lr1, lr2, alpha, epochs):
         self.batch_size = batch_size
-        self.lr = lr
-        self.label = label
+        self.lr1 = lr1
+        self.lr2 = lr2
         self.alpha = alpha
         self.epochs = epochs
         self.generator = self.generator_model()
@@ -18,47 +23,53 @@ class GAN:
         self.half_batch = int(batch_size / 2)
         self.plot_generator_input = self.generator_input(16)
 
-    def load_data(self):
+    @staticmethod
+    def load_data():
         """
-        Load the CIFAR-10 dataset with values in range [-1, 1]
-        :param label: integer corresponding to class label
+        Load cat dataset from folder with values in range [-1, 1]
         """
-        # loading a dataset of just one category to train a GAN model
-        (train_images, train_labels), (_, _) = datasets.cifar10.load_data()
-        train_images = train_images[train_labels.flatten() == self.label]
-        train_images = (train_images.astype('float32') - 127.5) / 127.5
 
-        return train_images
+        if os.path.exists('data.npy'):
+            images = np.load('data.npy')
+
+        else:
+            images = np.array([], dtype=np.uint8).reshape((0, 64, 64, 3))
+            for file in os.scandir('cats'):
+                if file.path.endswith('.jpg'):
+                    images = np.append(images, load_img(file))
+            images = images.reshape(15747, 64, 64, 3)
+            images = (images.astype('float32') - 127.5) / 127.5
+
+            np.save('data.npy', images)
+
+        return images
 
     def generator_model(self):
         """
         Create a generator model
-        :return model: generator model
         """
-        # TODO: use buffere value for 256
-        # TODO: add/remove batch normalization layers
+        # tried to impliment batch normalization but didn't trail well
         model = Sequential([
             # layer 1 - 4x4 array
             layers.Dense(256 * 4 * 4, input_shape=(100, )),
             layers.Reshape((4, 4, 256)),
             layers.LeakyReLU(alpha=self.alpha),
-            #             layers.BatchNormalization(),
             # layer 2 - 8x8 array
             layers.Conv2DTranspose(128, (4, 4), strides=(2, 2),
                                    padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            #             layers.BatchNormalization(),
             # layer 3 - 16x16 array
             layers.Conv2DTranspose(128, (4, 4), strides=(2, 2),
                                    padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            #             layers.BatchNormalization(),
             # layer 4 - 32x32 array
             layers.Conv2DTranspose(128, (4, 4), strides=(2, 2),
                                    padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            #             layers.BatchNormalization(),
-            # layer 5 - output layer - 32x32x3 array
+            # layer 5 - 64x64 array
+            layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'),
+            layers.LeakyReLU(alpha=self.alpha),
+            # output layer - 32x32x3 array
             layers.Conv2D(3, (3, 3), activation='tanh', padding='same')
         ])
 
@@ -71,29 +82,22 @@ class GAN:
         """
         model = Sequential([
             # layer 1
-            layers.Conv2D(128, (3, 3), padding='same',
-                          input_shape=(32, 32, 3)),
+            layers.Conv2D(64, (3, 3), padding='same', input_shape=(64, 64, 3)),
             layers.LeakyReLU(alpha=self.alpha),
-            # layers.Dropout(0.2),
-            # layers.BatchNormalization(),
             # layer 2
             layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            # layers.Dropout(0.2),
-            # layers.BatchNormalization(),
             # layer 3
             layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            # layers.Dropout(0.2),
-            # layers.BatchNormalization(),
             # layer 4
             layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            # layers.Dropout(0.2),
-            # layers.BatchNormalization(),
+            # layer 5
+            layers.Conv2D(128, (3, 3), strides=(2, 2), padding='same'),
+            layers.LeakyReLU(alpha=self.alpha),
             # output layer
             layers.Flatten(),
-            layers.Dropout(0.3),
             layers.Dense(1, activation='sigmoid')
         ])
 
@@ -103,11 +107,11 @@ class GAN:
         """
         Combine generator and discriminator to create a GAN model
         """
-        disc_adam = optimizers.Adam(lr=self.lr, beta_1=0.5)
+        disc_adam = optimizers.Adam(lr=self.lr1, beta_1=0.5)
         discriminator.compile(loss='binary_crossentropy', optimizer=disc_adam)
         discriminator.trainable = False
         model = Sequential([generator, discriminator])
-        gan_adam = optimizers.Adam(lr=self.lr, beta_1=0.5)
+        gan_adam = optimizers.Adam(lr=self.lr2, beta_1=0.5)
         model.compile(loss='binary_crossentropy', optimizer=gan_adam)
         return model
 
@@ -134,8 +138,6 @@ class GAN:
         batches = int(self.dataset.shape[0] / self.batch_size)
         for i in range(self.epochs):
             print('Training Epoch: {}'.format(i))
-            if i % 5 == 0:
-                self.plot_generated_images('epochs/Epoch_{}'.format(i))
             for _ in range(batches):
                 # train on real samples
                 real_images = self.real_samples()
@@ -150,6 +152,8 @@ class GAN:
                 gan_input = self.generator_input(self.batch_size)
                 gan_label = np.ones(shape=(self.batch_size, 1))
                 self.gan.train_on_batch(gan_input, gan_label)
+            if (i + 1) % 5 == 0:
+                self.plot_generated_images('epochs/Epoch_{}'.format(i + 1))
 
     def save_model(self):
         """
@@ -192,4 +196,9 @@ class GAN:
         """
         Print model summary
         """
+        print("Generator Model Summary:")
+        self.generator.summary()
+        print('Discriminator Model Summary:')
+        self.discriminator.summary()
+        print('GAN Model Summary:')
         self.gan.summary()

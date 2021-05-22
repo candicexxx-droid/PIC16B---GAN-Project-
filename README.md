@@ -2,9 +2,9 @@
 
 ## Useful gan.py Methods
 
-`load_model('')` restores the last trained model
+`load_model()` restores the last trained model
 
-`save_model('')` saves the last trained model
+`save_model()` saves the last trained model
 
 `train()` trains the model and outputs generated images every 5 epochs into
 the `epochs` folder
