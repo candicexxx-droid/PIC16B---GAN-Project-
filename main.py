@@ -5,7 +5,7 @@ from gan import GAN
 BATCH_SIZE = 128
 LR1 = 5e-5
 LR2 = 2e-4
-EPOCHS = 500
+EPOCHS = 750
 ALPHA = 5e-1
 
 # preventing my kernel from dying
