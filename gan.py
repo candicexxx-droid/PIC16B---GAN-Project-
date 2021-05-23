@@ -10,17 +10,18 @@ class GAN:
     Generative Adversarial Network class used to load a cat dataset and
     train a model.
     """
-    def __init__(self, batch_size, lr1, lr2, alpha, epochs):
-        self.batch_size = batch_size
-        self.lr1 = lr1
-        self.lr2 = lr2
-        self.alpha = alpha
-        self.epochs = epochs
-        self.generator = self.generator_model()
-        self.discriminator = self.discriminator_model()
-        self.gan = self.gan_model(self.generator, self.discriminator)
-        self.dataset = self.load_data()
-        self.half_batch = int(batch_size / 2)
+    def __init__(self):
+        """
+        GAN class variables can be set through train() or load_model()
+        """
+        self.dis_lr = None
+        self.gen_lr = None
+        self.alpha = None
+        self.epochs = None
+        self.generator = None
+        self.discriminator = None
+        self.gan = None
+        self.dataset = None
         self.plot_generator_input = self.generator_input(16)
 
     @staticmethod
@@ -78,7 +79,6 @@ class GAN:
     def discriminator_model(self):
         """
         Create a discriminator model
-        :return model: discriminator model
         """
         model = Sequential([
             # layer 1
@@ -107,20 +107,19 @@ class GAN:
         """
         Combine generator and discriminator to create a GAN model
         """
-        disc_adam = optimizers.Adam(lr=self.lr1, beta_1=0.5)
+        disc_adam = optimizers.Adam(lr=self.dis_lr, beta_1=0.5)
         discriminator.compile(loss='binary_crossentropy', optimizer=disc_adam)
         discriminator.trainable = False
         model = Sequential([generator, discriminator])
-        gan_adam = optimizers.Adam(lr=self.lr2, beta_1=0.5)
+        gan_adam = optimizers.Adam(lr=self.gen_lr, beta_1=0.5)
         model.compile(loss='binary_crossentropy', optimizer=gan_adam)
         return model
 
-    def real_samples(self):
+    def real_samples(self, half_batch):
         """
         Load real samples from the dataset
         """
-        indexes = np.random.randint(self.dataset.shape[0],
-                                    size=self.half_batch)
+        indexes = np.random.randint(self.dataset.shape[0], size=half_batch)
         real_images = self.dataset[indexes]
         return real_images
 
@@ -131,27 +130,46 @@ class GAN:
         """
         return np.random.randn(sample_size, 100)
 
-    def train(self):
+    def train(self, batch_size, dis_lr, gen_lr, alpha, epochs):
         """
         Train the GAN model
         """
-        batches = int(self.dataset.shape[0] / self.batch_size)
+        self.dis_lr = dis_lr
+        self.gen_lr = gen_lr
+        self.alpha = alpha
+        self.epochs = epochs
+        self.dataset = self.load_data()
+
+        # create a generator, discriminator and GAN
+        self.generator = self.generator_model()
+        self.discriminator = self.discriminator_model()
+        self.gan = self.gan_model(self.generator, self.discriminator)
+
+        # create half batch to set  number of training examples
+        # from real and training data
+        half_batch = int(batch_size / 2)
+
+        # number of batches to train per epoch
+        batches = int(self.dataset.shape[0] / batch_size)
+
+        # training
         for i in range(self.epochs):
             print('Training Epoch: {}'.format(i))
             for _ in range(batches):
                 # train on real samples
-                real_images = self.real_samples()
-                real_labels = np.ones(shape=(self.half_batch, 1))
+                real_images = self.real_samples(half_batch)
+                real_labels = np.ones(shape=(half_batch, 1))
                 self.discriminator.train_on_batch(real_images, real_labels)
                 # trian on fake samples
-                fake_input = self.generator_input(self.half_batch)
+                fake_input = self.generator_input(half_batch)
                 fake_images = self.generator.predict(fake_input)
-                fake_labels = np.zeros(shape=(self.half_batch, 1))
+                fake_labels = np.zeros(shape=(half_batch, 1))
                 self.discriminator.train_on_batch(fake_images, fake_labels)
                 # train GAN
-                gan_input = self.generator_input(self.batch_size)
-                gan_label = np.ones(shape=(self.batch_size, 1))
+                gan_input = self.generator_input(batch_size)
+                gan_label = np.ones(shape=(batch_size, 1))
                 self.gan.train_on_batch(gan_input, gan_label)
+            # save a png in epochs folder to show progress
             if (i + 1) % 5 == 0:
                 self.plot_generated_images('epochs/Epoch_{}'.format(i + 1))
 
@@ -159,12 +177,16 @@ class GAN:
         """
         Save a GAN model for later use
         """
+        self.generator.save('generator_model')
+        self.discriminator.save('discriminator_model')
         self.gan.save('gan_model')
 
     def load_model(self):
         """
         Load a previously saved GAN model
         """
+        self.generator = models.load_model('generator_model')
+        self.discriminator = models.load_model('discriminator_model')
         self.gan = models.load_model('gan_model')
 
     def plot_generated_images(self, filename):
@@ -185,7 +207,7 @@ class GAN:
         # save figure as png
         plt.savefig(filename)
 
-    def plot_individual_image(self):
+    def plot_individual_image(self, number):
         """
         Plot an individual image number 0-15 corresponding to images
         ploted by self.plot_generated_images()
