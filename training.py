@@ -25,3 +25,5 @@ gan_model.train(BATCH_SIZE, dis_lr, gen_lr, ALPHA, EPOCHS)
 gan_model.plot_generated_images('generated_images')
 # print a summary of the generator, discriminator, and GAN model
 gan_model.summary()
+# save model
+gan_model.save_model()
