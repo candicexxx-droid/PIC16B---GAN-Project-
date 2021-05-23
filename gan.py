@@ -186,8 +186,11 @@ class GAN:
         Load a previously saved GAN model
         """
         self.generator = models.load_model('generator_model')
+        print('generator loaded')
         self.discriminator = models.load_model('discriminator_model')
+        print('discriminator loaded')
         self.gan = models.load_model('gan_model')
+        print('gan loaded')
 
     def plot_generated_images(self, filename):
         """
