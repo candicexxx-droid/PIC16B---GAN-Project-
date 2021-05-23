@@ -115,11 +115,11 @@ class GAN:
         model.compile(loss='binary_crossentropy', optimizer=gan_adam)
         return model
 
-    def real_samples(self, half_batch):
+    def real_samples(self, size):
         """
         Load real samples from the dataset
         """
-        indexes = np.random.randint(self.dataset.shape[0], size=half_batch)
+        indexes = np.random.randint(self.dataset.shape[0], size=size)
         real_images = self.dataset[indexes]
         return real_images
 
