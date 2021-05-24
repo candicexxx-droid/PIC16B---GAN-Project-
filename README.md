@@ -84,6 +84,8 @@ gan_model.save_model()
 
 https://www.tensorflow.org/tutorials/generative/dcgan
 
+https://www.kaggle.com/spandan2/cats-faces-64x64-for-generative-models
+
 https://machinelearningmastery.com/how-to-implement-the-frechet-inception-distance-fid-from-scratch/
 
 https://machinelearningmastery.com/how-to-develop-a-generative-adversarial-network-for-an-mnist-handwritten-digits-from-scratch-in-keras/
