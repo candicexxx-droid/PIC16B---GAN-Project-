@@ -2,7 +2,9 @@
 # PIC16B GAN Project 
 
 ## Overview
+...
 
+## Discussion
 ...
 
 ## Training Results
