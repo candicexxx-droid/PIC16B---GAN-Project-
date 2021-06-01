@@ -1,6 +1,8 @@
 import os
 import numpy as np
-from keras import optimizers, models, layers, Sequential
+from scipy import linalg
+from scipy.ndimage import map_coordinates
+from keras import optimizers, models, layers, Sequential, applications
 from keras.preprocessing.image import load_img
 import matplotlib.pyplot as plt
 
@@ -23,6 +25,10 @@ class GAN:
         self.gan = None
         self.dataset = None
         self.plot_generator_input = self.generator_input(16)
+        self.inception_classifier = applications.inception_v3.InceptionV3(
+            include_top=False,
+            pooling='avg',
+            input_shape=(128, 128, 3))
 
     @staticmethod
     def load_data():
@@ -38,7 +44,7 @@ class GAN:
             for file in os.scandir('cats'):
                 if file.path.endswith('.jpg'):
                     images = np.append(images, load_img(file))
-            images = images.reshape(15747, 64, 64, 3)
+            images = np.reshape(images, newshape=(15747, 64, 64, 3))
             images = (images.astype('float32') - 127.5) / 127.5
 
             np.save('data.npy', images)
@@ -227,3 +233,52 @@ class GAN:
         self.discriminator.summary()
         print('GAN Model Summary:')
         self.gan.summary()
+
+    def stretch_imgs(self, images):
+        """
+        Doubles the height and width of a set of images to work with the
+        inceptionV3 classfier
+        """
+        idx = np.indices(dimensions=images.shape, dtype=float)
+        idx[1] *= 0.5
+        idx[2] *= 0.5
+        return map_coordinates(images, idx, order=1, mode='nearest')
+
+    def FID(self):
+        """
+        Evaluate the current generator model with frechet inception
+        distance score.
+        """
+        # load dataset into the class
+        self.dataset = self.load_data()
+        print('Calculating FID score...')
+        # create real and generated images to compare
+        sample_size = self.dataset.shape[0]
+        fake_gen_input = self.generator_input(sample_size)
+        fake_imgs = self.generator.predict(fake_gen_input)
+        print(fake_imgs.shape)
+        # stretch images to 128x128
+        fake_imgs = np.kron(fake_imgs, np.ones(shape=(1, 2, 2, 1)))
+        print(fake_imgs.shape)
+        real_imgs = self.dataset
+        print(real_imgs.shape)
+        # stretch images to 128x128
+        real_imgs = np.kron(real_imgs, np.ones(shape=(1, 2, 2, 1)))
+        print(real_imgs.shape)
+        # calculate activations
+        fake_act = self.inception_classifier.predict(fake_imgs)
+        real_act = self.inception_classifier.predict(real_imgs)
+        # calculate mean and covariance statistics
+        mu1, sigma1 = fake_act.mean(axis=0), np.cov(fake_act, rowvar=False)
+        mu2, sigma2 = real_act.mean(axis=0), np.cov(real_act, rowvar=False)
+        # calculate sum squared difference between means
+        ssdiff = np.sum((mu1 - mu2)**2.0)
+        # calculate sqrt of product between cov
+        covmean = linalg.sqrtm(sigma1.dot(sigma2))
+        # check and correct imaginary numbers from sqrt
+        if np.iscomplexobj(covmean):
+            covmean = covmean.real
+        # calculate score
+        fid = ssdiff + np.trace(sigma1 + sigma2 - 2.0 * covmean)
+        print('FID score: ', fid)
+        return fid
