@@ -27,6 +27,6 @@ x = np.arange(10, 501, 10)
 print(x)
 fig = sns.lineplot(x=x, y=fid_scores)
 fig.set(xlabel='Epochs',
-        ylabel='Frenchet Inception Distance',
+        ylabel='Frechet Inception Distance',
         title='FID Score at Intervals of 10 Epochs')
 plt.savefig('fid_scores_per_epoch')

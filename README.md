@@ -7,6 +7,13 @@
 ## Discussion
 ...
 
+## Frechet Inception Distance
+$$ d^2 ((m, C), (m_w, C_w)) = \Vert m - m_w \Vert^2_2 + \text{Tr} (C + C_w - 2(CC_w)^{1/2})$$
+
+...
+
+![FID Scores per 10 Epochs](fid_scores_per_epoch.png)
+
 ## Training Results
 
 ![500 epochs](epochs/Epoch_500.png)
