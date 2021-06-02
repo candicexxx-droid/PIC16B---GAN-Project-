@@ -76,7 +76,7 @@ class GAN:
             # layer 5 - 64x64 array
             layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            # output layer - 32x32x3 array
+            # output layer - 64x64x3 array
             layers.Conv2D(3, (3, 3), activation='tanh', padding='same')
         ])
 
@@ -231,7 +231,6 @@ class GAN:
         self.discriminator.summary()
         print('GAN Model Summary:')
         self.gan.summary()
-
 
     def FID(self, sample_size):
         """
