@@ -91,6 +91,8 @@ gan_model.save_model()
 
 ## References
 
+https://arxiv.org/abs/1706.08500
+
 https://www.tensorflow.org/tutorials/generative/dcgan
 
 https://www.kaggle.com/spandan2/cats-faces-64x64-for-generative-models
