@@ -178,6 +178,11 @@ class GAN:
             # save a png in epochs folder to show progress
             if (i + 1) % 5 == 0:
                 self.plot_generated_images('epochs/Epoch_{}'.format(i + 1))
+            # save models to use for later analysis
+            if (i + 1) % 10 == 0:
+                self.generator.save('models/gen_model{}'.format(i + 1))
+                self.discriminator.save('models/dis_model{}'.format(i + 1))
+                self.gan.save('models/gan_model{}'.format(i + 1))
 
     def save_model(self):
         """
