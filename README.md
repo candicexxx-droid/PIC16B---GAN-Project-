@@ -9,8 +9,8 @@
 
 ## Training Results
 
-![750 epochs](epochs/Epoch_750.png)
-Generator output after 750 epochs
+![500 epochs](epochs/Epoch_500.png)
+Generator output after 500 epochs
 
 
 ## GAN Class
