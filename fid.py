@@ -1,17 +1,32 @@
-# |%%--%%|
-import tensorflow as tf
+import os
+import numpy as np
+from keras import models
+import matplotlib.pyplot as plt
+import seaborn as sns
 from gan import GAN
 
 
-# code that helps prevent my kernal from dying while training on gpu
-# comment out if not needed
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-config = tf.config.experimental.set_memory_growth(physical_devices[0], True)
+SAMPLE_SIZE = 7000
+fid_scores = []
 
-# Load last trained model to skip training time
-gan_model = GAN()
-gan_model.load_model()
-# TODO: write code for interpolation and other
-# FID related functions
-# get fid score
-gan_model.FID()
+# check if FID scores have already been recorded
+if os.path.exists('fid_scores.npy'):
+    fid_scores = np.load('fid_scores.npy')
+# get FID scores from saved model stages
+else:
+    gan_model = GAN()
+    for i in range(10, 501, 10):
+        gan_model.generator = models.load_model('models/gen_model{}'.format(i))
+        fid_scores.append(gan_model.FID(SAMPLE_SIZE))
+    # save numpy array file
+    fid_arr = np.array(fid_scores)
+    np.save('fid_scores.npy', fid_arr)
+
+# plot  FID scores
+x = np.arange(10, 501, 10)
+print(x)
+fig = sns.lineplot(x=x, y=fid_scores)
+fig.set(xlabel='Epochs',
+        ylabel='Frenchet Inception Distance',
+        title='FID Score at Intervals of 10 Epochs')
+plt.savefig('fid_scores_per_epoch')

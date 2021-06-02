@@ -221,13 +221,6 @@ class GAN:
         # save figure as png
         plt.savefig(filename)
 
-    def plot_individual_image(self, number):
-        """
-        Plot an individual image number 0-15 corresponding to images
-        ploted by self.plot_generated_images()
-        """
-        ...
-
     def summary(self):
         """
         Print model summary
@@ -239,17 +232,8 @@ class GAN:
         print('GAN Model Summary:')
         self.gan.summary()
 
-    def stretch_imgs(self, images):
-        """
-        Doubles the height and width of a set of images to work with the
-        inceptionV3 classfier
-        """
-        idx = np.indices(dimensions=images.shape, dtype=float)
-        idx[1] *= 0.5
-        idx[2] *= 0.5
-        return map_coordinates(images, idx, order=1, mode='nearest')
 
-    def FID(self):
+    def FID(self, sample_size):
         """
         Evaluate the current generator model with frechet inception
         distance score.
@@ -258,18 +242,14 @@ class GAN:
         self.dataset = self.load_data()
         print('Calculating FID score...')
         # create real and generated images to compare
-        sample_size = self.dataset.shape[0]
         fake_gen_input = self.generator_input(sample_size)
         fake_imgs = self.generator.predict(fake_gen_input)
-        print(fake_imgs.shape)
         # stretch images to 128x128
         fake_imgs = np.kron(fake_imgs, np.ones(shape=(1, 2, 2, 1)))
-        print(fake_imgs.shape)
-        real_imgs = self.dataset
-        print(real_imgs.shape)
+        # get real samples
+        real_imgs = self.real_samples(sample_size)
         # stretch images to 128x128
         real_imgs = np.kron(real_imgs, np.ones(shape=(1, 2, 2, 1)))
-        print(real_imgs.shape)
         # calculate activations
         fake_act = self.inception_classifier.predict(fake_imgs)
         real_act = self.inception_classifier.predict(real_imgs)
