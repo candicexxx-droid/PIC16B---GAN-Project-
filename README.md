@@ -28,8 +28,11 @@ To evaluate the model we used the
 ## Training Results
 
 ![500 epochs](epochs/Epoch_500.png)
-Generator output after 500 epochs
+Generator output after 500 epochs.
 
+## Interpolation
+![interpolation](interpolation.png)
+Observing how the model reacts to variation in the input space.
 
 ## GAN Class
 The GAN class is contained in the `gan.py` file. The following is a list of 
