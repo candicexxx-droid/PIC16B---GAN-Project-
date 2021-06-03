@@ -28,7 +28,12 @@ To evaluate the model we used the
 ## Training Results
 
 ![500 epochs](epochs/Epoch_500.png)
+
 Generator output after 500 epochs.
+
+![GIF](gan.gif)
+
+Training Process from epoch 5 to epoch 495.
 
 ## Interpolation
 ![interpolation](interpolation.png)
