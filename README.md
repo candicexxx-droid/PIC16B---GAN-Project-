@@ -33,7 +33,7 @@ Generator output after 500 epochs.
 
 ![GIF](gan.gif)
 
-Training Process from epoch 5 to epoch 495.
+Training Process from epoch 5 to epoch 500.
 
 ## Interpolation
 ![interpolation](interpolation.png)
