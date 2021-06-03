@@ -1,6 +1,8 @@
 import os
 import numpy as np
-from keras import optimizers, models, layers, Sequential
+from scipy import linalg
+from scipy.ndimage import map_coordinates
+from keras import optimizers, models, layers, Sequential, applications
 from keras.preprocessing.image import load_img
 import matplotlib.pyplot as plt
 
@@ -23,6 +25,10 @@ class GAN:
         self.gan = None
         self.dataset = None
         self.plot_generator_input = self.generator_input(16)
+        self.inception_classifier = applications.inception_v3.InceptionV3(
+            include_top=False,
+            pooling='avg',
+            input_shape=(128, 128, 3))
 
     @staticmethod
     def load_data():
@@ -38,7 +44,7 @@ class GAN:
             for file in os.scandir('cats'):
                 if file.path.endswith('.jpg'):
                     images = np.append(images, load_img(file))
-            images = images.reshape(15747, 64, 64, 3)
+            images = np.reshape(images, newshape=(15747, 64, 64, 3))
             images = (images.astype('float32') - 127.5) / 127.5
 
             np.save('data.npy', images)
@@ -70,7 +76,7 @@ class GAN:
             # layer 5 - 64x64 array
             layers.Conv2DTranspose(64, (4, 4), strides=(2, 2), padding='same'),
             layers.LeakyReLU(alpha=self.alpha),
-            # output layer - 32x32x3 array
+            # output layer - 64x64x3 array
             layers.Conv2D(3, (3, 3), activation='tanh', padding='same')
         ])
 
@@ -172,6 +178,11 @@ class GAN:
             # save a png in epochs folder to show progress
             if (i + 1) % 5 == 0:
                 self.plot_generated_images('epochs/Epoch_{}'.format(i + 1))
+            # save models to use for later analysis
+            if (i + 1) % 10 == 0:
+                self.generator.save('models/gen_model{}'.format(i + 1))
+                self.discriminator.save('models/dis_model{}'.format(i + 1))
+                self.gan.save('models/gan_model{}'.format(i + 1))
 
     def save_model(self):
         """
@@ -210,13 +221,6 @@ class GAN:
         # save figure as png
         plt.savefig(filename)
 
-    def plot_individual_image(self, number):
-        """
-        Plot an individual image number 0-15 corresponding to images
-        ploted by self.plot_generated_images()
-        """
-        ...
-
     def summary(self):
         """
         Print model summary
@@ -227,3 +231,38 @@ class GAN:
         self.discriminator.summary()
         print('GAN Model Summary:')
         self.gan.summary()
+
+    def FID(self, sample_size):
+        """
+        Evaluate the current generator model with frechet inception
+        distance score.
+        """
+        # load dataset into the class
+        self.dataset = self.load_data()
+        print('Calculating FID score...')
+        # create real and generated images to compare
+        fake_gen_input = self.generator_input(sample_size)
+        fake_imgs = self.generator.predict(fake_gen_input)
+        # stretch images to 128x128
+        fake_imgs = np.kron(fake_imgs, np.ones(shape=(1, 2, 2, 1)))
+        # get real samples
+        real_imgs = self.real_samples(sample_size)
+        # stretch images to 128x128
+        real_imgs = np.kron(real_imgs, np.ones(shape=(1, 2, 2, 1)))
+        # calculate activations
+        fake_act = self.inception_classifier.predict(fake_imgs)
+        real_act = self.inception_classifier.predict(real_imgs)
+        # calculate mean and covariance statistics
+        mu1, sigma1 = fake_act.mean(axis=0), np.cov(fake_act, rowvar=False)
+        mu2, sigma2 = real_act.mean(axis=0), np.cov(real_act, rowvar=False)
+        # calculate sum squared difference between means
+        ssdiff = np.sum((mu1 - mu2)**2.0)
+        # calculate sqrt of product between cov
+        covmean = linalg.sqrtm(sigma1.dot(sigma2))
+        # check and correct imaginary numbers from sqrt
+        if np.iscomplexobj(covmean):
+            covmean = covmean.real
+        # calculate score
+        fid = ssdiff + np.trace(sigma1 + sigma2 - 2.0 * covmean)
+        print('FID score: ', fid)
+        return fid

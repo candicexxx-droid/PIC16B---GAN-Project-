@@ -10,7 +10,7 @@ from gan import GAN
 BATCH_SIZE = 128
 DISCRIMINATOR_LR = 5e-5
 GENERATOR_LR = 2e-4
-EPOCHS = 750
+EPOCHS = 500
 ALPHA = 5e-1
 
 # code that helps prevent my kernal from dying while training on gpu
