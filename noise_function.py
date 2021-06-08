@@ -66,101 +66,61 @@ def Gaussian_Blur (images, ksize = 5, alpha = 0):
 
 #####Add Random Rectangles#####
 
-
-
-def rect(img, n_rect, share, hi=64, wi=64, chan=3, val=0.0):
+def rect(res, share, hi=64, wi=64, chan=3):
     '''
     Apply n_rect numbers of black rectangles to images
     
     Input Arguments:
-    img: training data(RGD channel range(0,225))
-    n_rect: numbers of black rectangles want to add
+    image_num: number of images in input
+    res: training data(RGD channel range(0,225),4d)
     share: control the size of implanted rectangles(0-1)
     hi,wi,chan: shape of images
     '''
+    image_num = res.shape[0]
+    result = np.zeros_like(res)
+    for i in range(image_num):
 
-
-
-    def drop_rect(img_in, hi=64, wi=64, chan=3, share=0.5, positioning="random", val=0.0):
-        '''
-        Implant black rectangles to images
-        
-        Input Arguments:
-        img_in: training data(RGD channel range(0,225))
-        share: control the size of implanted rectangles(0-1)
-        hi,wi,chan: shape of images
-        '''
-        img = img_in.copy()
         rhi = np.int(hi*share)
         rwi = np.int(wi*share)
-        xpos = random.randint(0, hi-rhi)
+        xpos = random.randint(0, hi-rhi)            
         ypos = random.randint(0, wi-rwi)
         xdim = xpos + rhi
         ydim = ypos + rwi
-        img = img.reshape(hi,wi, chan)
-        img[xpos:xdim,ypos:ydim,:] = np.ones((rhi, rwi, chan))*val
-        return img 
+        
+        img_i = res[i,:].copy()
 
-
-
-
-    img=img.astype(np.float).flatten()
-    transf_data = np.zeros_like(img)
-    for i in range(64):
-        img = img.reshape(hi,wi,chan)
-        transf_data = drop_rect(img, hi, wi, chan, share=share, val=val).flatten()
-        for j in range(1,n_rect):
-            img = transf_data.reshape(hi,wi,chan)
-            transf_data = drop_rect(img, hi, wi, chan, share=share, val=val).flatten()
-    return transf_data.reshape(64,64,3).astype(int)
+        img_i[xpos:xdim,ypos:ydim,:] = np.ones((rhi, rwi, chan))*0.0
+        result[i,:,:,:]=img_i
+    return result
 
 #####Swirl#####
 
 
 
 # In[106]:
-def apply_swirl(img, n_swirls, radius, strength, hi=64, wi=64, chan=3):
+def apply_swirl(res, n_swirls, radius=30, strength=3, hi=64, wi=64, chan=3):
     '''
     Apply Swirl to images
     
     Input Arguments:
-    img: training data(RGD channel range(0,225))
+    image_num: number of images in the input
+    res: training data(number of images, RGD channel range(0,225),4 dim)
     n_swirls: number of swirls applied
-    radius: control the size of swirls(0-hi)
     hi,wi,chan: shape of images
     '''
-    def lokal_swirl(img_in, n_swirls, radius, strength, hi=64, wi=64, chan=3, corr_size=3):
-        '''
-        Swirl the images
-        
-        Input Arguments:
-        img_in: training data(RGD channel range(0,225))
-        n_swirls: number of swirls applied
-        radius: control the size of swirls(0-hi)
-        hi,wi,chan: shape of images
-        '''
-        img = img_in.copy()
-        size = corr_size
-        for i in range(n_swirls):
-            sign = np.sign(np.random.rand(1) - 0.5)[0]
+    image_num = res.shape[0]
+    result = np.zeros_like(res).astype(float)
+    for i in range(image_num):
+        img = res[i,:].copy()
+
+        for j in range(n_swirls):
 
             xpos = hi // 2
             ypos = wi // 2
             center = (xpos,ypos)
-            img = swirl(img, rotation=0, strength=sign*strength, radius=radius, center=center)
-            img[0:size] = img_in[0:size]
-            img[-(size+1):] = img_in[-(size+1):]
-            img[:,0:size] = img_in[:,0:size]
-            img[:,-(size+1):] = img_in[:,-(size+1):]
-        return img
-    img=img.astype(np.float).flatten()
-    transf_data = np.zeros_like(img)
-    for i in range(64):
-        img_in = img.reshape(hi,wi,chan)
-        img = lokal_swirl(img_in, n_swirls, radius, strength, hi=64, wi=64, chan=4)
-        transf_data = img.flatten()
-    return transf_data.reshape(64,64,3).astype(int)
-
+            img = swirl(img, rotation=0, strength=strength, radius=radius, center=center)
+        result[i,:,:,:]=img
+    return result
 #####Test#######
 # plt.imshow(Gaussian_noise(im_np)), plt.axis('off'), plt.show()
 # plt.imshow(Gaussian_Blur(im_np)), plt.axis('off'), plt.show()
