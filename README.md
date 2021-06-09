@@ -26,7 +26,7 @@ where m denotes the feature-wise mean from  generated images; m_w denotes the fe
 
 
 ### Frechet Inception Distance at Intervals of 10 Epochs
-We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. The FID score for our final model is _____?
+We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094. 
 ![FID Scores per 10 Epochs](fid_scores_per_epoch.png)
 
 
