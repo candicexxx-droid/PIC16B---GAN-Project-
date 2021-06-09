@@ -2,6 +2,7 @@
 data.npy
 # remove unnecessary files  
 .vscode/
+.DS_Store
 
 
 # Byte-compiled / optimized / DLL files
