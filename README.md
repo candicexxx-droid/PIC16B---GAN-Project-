@@ -24,7 +24,10 @@ To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID 
             <img width="545" alt="Screen Shot 2021-06-08 at 8 31 18 PM" src="https://user-images.githubusercontent.com/76800486/121185296-7d6fdf80-c898-11eb-9d4e-28739a17d768.png"><br />
 where m denotes the feature-wise mean from  generated images; m_w denotes the feature-wise mean from  real-world images; C and C_w are the covariance matrices obtained by generated images and real-world images respectively. Lower FID score indicates less difference between distributions generated images and that of real world images. 
 
-
+![GaussianBlur](fid_GaussianBlur.png)
+![GaussianNoise](fid_GaussianNoise.png)
+![Rect](fid_Rect.png)
+![Swirl](fid_Swirl.png)
 ### Frechet Inception Distance at Intervals of 10 Epochs
 We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094. 
 ![FID Scores per 10 Epochs](fid_scores_per_epoch.png)
