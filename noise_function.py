@@ -1,8 +1,8 @@
 import tensorflow as tf
-import imageio
+# import imageio
 import numpy as np
-import cv2 as cv
 from matplotlib import pyplot as plt
+import cv2 as cv
 # from skimage.filters import gaussian
 from scipy.linalg import sqrtm
 import random
@@ -50,12 +50,14 @@ def Gaussian_Blur (images, ksize = 5, alpha = 0):
 
   """
   
+  if ksize == 0:
+      return images
   # kernel = np.random.normal(mean, sigma, (ksize,ksize)) #Gaussian Kernel
   examp_num = images.shape[0]
   new_images = []
   for i in range(examp_num): 
     image = images[i].copy()
-    new = cv.GaussianBlur(image,ksize = (ksize, ksize), sigmaX = alpha)
+    new = cv.GaussianBlur(image, ksize=(int(ksize), int(ksize)), sigmaX=int(alpha))
     new_images.append(new)
   new_images = np.array(new_images)
   return new_images
@@ -76,6 +78,8 @@ def rect(res, share, hi=64, wi=64, chan=3):
     share: control the size of implanted rectangles(0-1)
     hi,wi,chan: shape of images
     '''
+    if share == 0:
+        return res
     image_num = res.shape[0]
     result = np.zeros_like(res)
     for i in range(image_num):
@@ -108,6 +112,8 @@ def apply_swirl(res, n_swirls, radius=30, strength=3, hi=64, wi=64, chan=3):
     n_swirls: number of swirls applied
     hi,wi,chan: shape of images
     '''
+    if n_swirls == 0:
+        return res
     image_num = res.shape[0]
     result = np.zeros_like(res).astype(float)
     for i in range(image_num):
