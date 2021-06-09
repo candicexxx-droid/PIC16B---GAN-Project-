@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 import seaborn as sns
 import numpy as np
 import tensorflow as tf
@@ -18,6 +19,7 @@ SAMPLE_SIZE = 5000
 gan_model = GAN()
 gan_model.dataset = gan_model.load_data()
 training_cats = gan_model.real_samples(SAMPLE_SIZE)
+
 
 # print(training_cats.shape)
 
@@ -45,6 +47,7 @@ fig = sns.lineplot(x=alpha_gnoise, y=fid_gnoise)
 fig.set(xlabel='alpha',
         ylabel='FID Score',
         title='FID Score with Variation in Gausian Noise')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(-1, 1), useMathText=True)
 plt.savefig('fid_GaussianNoise.png')
 plt.clf()
 
@@ -61,6 +64,7 @@ fig = sns.lineplot(x=alpha_gblur, y=fid_gblur)
 fig.set(xlabel='alpha',
         ylabel='FID Score',
         title='FID Score with Variation in Gaussian Blur')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(-1, 1), useMathText=True)
 plt.savefig('fid_GaussianBlur.png')
 plt.clf()
 
@@ -75,6 +79,7 @@ fig = sns.lineplot(x=alpha_rect, y=fid_rect)
 fig.set(xlabel='alpha',
         ylabel='FID Score',
         title='FID Score with Variation in Random Rectangles')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(-1, 1), useMathText=True)
 plt.savefig('fid_Rect.png')
 plt.clf()
 
@@ -89,5 +94,6 @@ fig = sns.lineplot(x=alpha_swirl, y=fid_swirl)
 fig.set(xlabel='alpha',
         ylabel='FID Score',
         title='FID Score with Variation in Swirl')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(-1, 1), useMathText=True)
 plt.savefig('fid_Swirl.png')
 plt.clf()
