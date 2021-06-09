@@ -1,5 +1,8 @@
 # file too large
 data.npy
+# remove unnecessary files  
+.vscode/
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
