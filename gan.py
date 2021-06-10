@@ -5,6 +5,7 @@ from scipy.ndimage import map_coordinates
 from keras import optimizers, models, layers, Sequential, applications
 from keras.preprocessing.image import load_img
 import matplotlib.pyplot as plt
+import tensorflow
 
 
 class GAN:
