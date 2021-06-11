@@ -4,8 +4,8 @@
 ## Overview
 Our project implements a deep convolutional adversarial network (DCGAN) using
 the keras library. The DCGAN is made by creating a generator and discriminator
-model. The generator creates artificial images while the discriminator acts as
-a binary classifier. As the model trains, both the generator and discriminator
+model. The generator takes a random noise vector and creates artificial images, while the discriminator acts as
+a binary classifier during the training process to improve generators' performance. As the model trains, both the generator and discriminator
 weights are updated as they approach an equilibrium. To aid the models in
 reaching an equilibrium, each model was trained with a different learning
 rate. Both the generator and discriminator were implemented using 4
@@ -15,6 +15,19 @@ We trained our model on a
 containing 15.7k images. Training the
 model took about 4 hours with 500 epochs.
 
+
+
+## Training Results
+
+![500 epochs](epochs/Epoch_500.png) <br />
+The above images are outputs from the generator after 500 epochs.
+
+<br>
+
+![GIF](images/gan.gif) <br />
+Training Process from epoch 5 to epoch 500.
+
+## Model Evaluation - FID Score
 To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID 
 was first proposed in the paper,
 [Frechet Inception Distance as described in the GANs Trained by a Two Time-Scale Update RuleConverge to a Local Nash Equilibrium](https://arxiv.org/abs/1706.08500)
@@ -32,6 +45,8 @@ matrices obtained by generated images and real-world images respectively. Lower
 FID score indicates less difference between distributions generated images and 
 that of real world images. 
 
+### Exploring FID score on Training Data with Noise
+Before we dive into the FID score for generated images, following the appendix section on FID score of the paper mentioned above, we studied how FID score changes if we add different types of random noise to our own training data. We applied four types of random noise, Gaussian noise, Gaussian blur, Swirl, and random rectangles. All types of random noise are applied with different noise level, indicated by alpha. Higher alpha values indicate higher noise level. We applied 4 types of noise with different alpha values to all of our training data, and calculate the FID score for each alpha value. We plot the change of FID score versus alpha value for each noise type below. We can observe that in general, FID score increases as we increase alpha, which indicates that the distribution of data with higher noise level has a much higher difference from the original data. Python code for noise functions can be found in noise_function.py, and test.py implements noise_function.py on our training data. 
 ![GaussianBlur_Noise](images/Gaussian.png)
 ![Rect_Swirl](images/Swirl_Rect.png)
 
@@ -42,22 +57,11 @@ lower right: swirled images（choices of alpha: 0, 1, 2, 4）\
 The disturbance level rises from zero and increases to the highest level. The FID captures the disturbance level very well by monotonically increasing.
 
 ### Frechet Inception Distance at Intervals of 10 Epochs
-We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094. 
+We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094.  <br />
 ![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
 
-
-## Training Results
-
-![500 epochs](epochs/Epoch_500.png)
-Generator output after 500 epochs.
-
-<br>
-
-![GIF](images/gan.gif)
-Training Process from epoch 5 to epoch 500.
-
 ## Interpolation
-![interpolation](images/interpolation.png)
+![interpolation](images/interpolation.png) <br />
 Observing how the model reacts to variation in the input space.
 
 ## GAN Class
