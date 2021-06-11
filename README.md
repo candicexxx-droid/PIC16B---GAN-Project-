@@ -32,10 +32,15 @@ matrices obtained by generated images and real-world images respectively. Lower
 FID score indicates less difference between distributions generated images and 
 that of real world images. 
 
-![GaussianBlur](images/fid_GaussianBlur.png)
-![GaussianNoise](images/fid_GaussianNoise.png)
-![Rect](images/fid_Rect.png)
-![Swirl](images/fid_Swirl.png)
+![GaussianBlur_Noise](images/Gaussian.png)
+![Rect_Swirl](images/Swirl_Rect.png)
+
+FID is evaluated for upper left: Gaussian noise（choices of alpha: 0, 0.1, 0.25, 0.3, 0.4）\
+upper right: Gaussian blur（choices of alpha: 0, 1, 3, 4）\
+lower left: implanted black rectangles（choices of alpha: 0, 0.25, 0.5, 0.75）\
+lower right: swirled images（choices of alpha: 0, 1, 2, 4）\
+The disturbance level rises from zero and increases to the highest level. The FID captures the disturbance level very well by monotonically increasing.
+
 ### Frechet Inception Distance at Intervals of 10 Epochs
 We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094. 
 ![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
