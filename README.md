@@ -77,11 +77,12 @@ We want to explore how FID score improves throughout training. We saved the gene
 ![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
 
 ## Interpolation
-The graph below shows how our generator model reacts to different inputs. In 
-our model we used an input vector containing 100 random variables initialized with a normal
-distribution. From left to right, we can see how an incremental change in the
-input vector changes
-the generated output.
+The grid below shows how our generator model reacts to different inputs. Our generator model takes
+an input vector containing 100 random variables initialized with a normal
+distribution to generate an image. From left to right, the images below have been
+incrementaly changed by adding a small vector the original input vector. The
+resulting grid can be used to visually interpret how the images on the left side
+are incrementally morphed to become the output on the right side.
 ![interpolation](images/interpolation.png) <br />
 
 
