@@ -25,7 +25,10 @@ The above images are outputs from the generator after 500 epochs.
 <br>
 
 ![GIF](images/gan.gif) <br />
-The gif above shows our training process from epoch 5 to epoch 500. We could see that the resulting images change from random noises to clear images of cats. Around epoch 15, our images start to capture cats' features on eyes. Around epoch 100, we could easily identify that the resulting images are cats. 
+The gif above shows our training process from epoch 5 to epoch 500. We could
+see that the resulting images change from random noises to clear images of cats.
+Around epoch 15, our images start to capture cats' features on eyes. Around
+epoch 100, we could easily identify that the resulting images are cats. 
 
 ## Model Evaluation - FID Score
 To evaluate our GAN model, we applied the Frechet Inception Distance (FID). FID 
@@ -46,7 +49,20 @@ FID score indicates less difference between distributions generated images and
 that of real world images. 
 
 ### Exploring FID score on Training Data with Noise
-Before we dive into the FID score for generated images, following the appendix section on FID score of the paper mentioned above, we studied how FID score changes if we add different types of random noise to our own training data. We applied four types of random noise, Gaussian noise, Gaussian blur, Swirl, and random rectangles. All types of random noise are applied with different noise levels, indicated by alpha. Higher alpha values indicate higher noise level. We applied 4 types of noise with different alpha values to all of our training data, and calculate the FID score for each alpha value. We plot the change of FID score versus alpha value for each noise type below. We can observe that in general, FID score increases as we increase alpha, which indicates that the distribution of data with higher noise level has a much higher difference from the original data. Python code for noise functions can be found in noise_function.py, and test.py implements noise_function.py on our training data. 
+Before we dive into the FID score for generated images, following the appendix
+section on FID score of the paper mentioned above, we studied how FID score
+changes if we add different types of random noise to our own training data. We
+applied four types of random noise, Gaussian noise, Gaussian blur, Swirl, and
+random rectangles. All types of random noise are applied with different noise
+levels, indicated by alpha. Higher alpha values indicate higher noise level. We
+applied 4 types of noise with different alpha values to all of our training
+data, and calculate the FID score for each alpha value. We plot the change of
+FID score versus alpha value for each noise type below. We can observe that in
+general, FID score increases as we increase alpha, which indicates that the
+distribution of data with higher noise level has a much higher difference from
+the original data. Python code for noise functions can be found in
+`noise_function.py`, and `test.py` implements `noise_function.py` on our training
+data. 
 ![GaussianBlur_Noise](images/Gaussian.png)
 ![Rect_Swirl](images/Swirl_Rect.png)
 
@@ -61,8 +77,13 @@ We want to explore how FID score improves throughout training. We saved the gene
 ![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
 
 ## Interpolation
+The graph below shows how our generator model reacts to different inputs. In 
+our model we used an input vector containing 100 random variables initialized with a normal
+distribution. From left to right, we can see how an incremental change in the
+input vector changes
+the generated output.
 ![interpolation](images/interpolation.png) <br />
-Observing how the model reacts to variation in the input space.
+
 
 ## GAN Class
 The GAN class is contained in the `gan.py` file. The following is a list of 
