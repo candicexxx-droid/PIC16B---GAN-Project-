@@ -17,12 +17,38 @@ model took about 4 hours with 500 epochs.
 
 ## The DCGAN Model & Training Process
 
-Our DCGAN model follows the standard model structure from the DCGAN tutorial by TensorFlow. The generator model takes an input noise vector of shape (100,) and maps it to an array with same shape as the training data (64,64,3). The generator model starts with a dense layer, followed by 4 Conv2D Transpose layers that map an input array of a smaller shape to an output array of a larger shape. The generator model can be found in the 'generator_model' method under the GAN class definition from gan.py. The discriminator model is a binary classifier that takes an input image of shape (64,64,3) and maps it to a number from 0 to 1. The output value that is more closer to 1 means the input image is more likely to be a 'real' image instead of a generated one. Hence, the discriminator model is made up of 5 Conv2D layers and a final dense layer. Its definition can be found in the 'discriminator_model' method under the GAN class definition from gan.py.
+Our DCGAN model follows the standard model structure from the
+[DCGAN tutorial by Tensorflow](https://www.tensorflow.org/tutorials/generative/dcgan).
+The generator model takes an input noise vector of shape (100,) and maps it to
+an array with same shape as the training data (64,64,3). The generator model
+starts with a dense layer, followed by 4 Conv2D Transpose layers that map an
+input array of a smaller shape to an output array of a larger shape. The
+generator model can be found in the 'generator_model' method under the GAN
+class definition from `gan.py`. The discriminator model is a binary classifier
+that takes an input image of shape (64,64,3) and maps it to a number from 0 to 1.
+The output value that is more closer to 1 means the input image is more
+likely to be a 'real' image instead of a generated one. Hence, the
+discriminator model is made up of 5 Conv2D layers and a final dense layer. Its
+definition can be found in the 'discriminator_model' method under the GAN
+class definition from `gan.py`.
 
 The training process aims to train the generator output images that resemble the training data as much as possible. 
-In a single training iteration, we firstly fix parameters of the generator we feed the discriminator with both training images (labeled as '1') and fake images from generator (labeled as '0'), and update its parameters. The optimization goal for discriminator is to train it to produce accurate labels based on the fake and real images we provide. Then we fix parameters of discriminator and obtain images from the generator. Then we input those images back to the discriminator and obtain the single-value outputs. The optimization goal is to train the generator that can produce images that can have the discriminator to output the single value as close to 1 as possible. As training proceed, the fake images (from generator) we feed into the discriminator will continue to improve. Hence, the discriminator has to be better at distinguishing real and fake data, which also forces the generator to produce images that resemble more to the training data. 
+In a single training iteration, we firstly fix parameters of the generator we
+feed the discriminator with both training images (labeled as '1') and fake
+images from generator (labeled as '0'), and update its parameters. The
+optimization goal for discriminator is to train it to produce accurate
+labels based on the fake and real images we provide. Then we fix parameters
+of discriminator and obtain images from the generator. Then we input those
+images back to the discriminator and obtain the single-value outputs. The
+optimization goal is to train the generator that can produce images that can
+have the discriminator to output the single value as close to 1 as possible. As
+training proceeds, the fake images (from generator) we feed into the
+discriminator will continue to improve. Hence, the discriminator has to be
+better at distinguishing real and fake data, which also forces the generator
+to produce images that resemble more to the training data. 
 
-The training function can be found in  'train' method under the GAN class definition from gan.py.
+The training function can be found in `train` method under the GAN class
+definition from `gan.py`.
 
 ## Training Results
 
