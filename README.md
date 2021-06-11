@@ -25,7 +25,7 @@ The above images are outputs from the generator after 500 epochs.
 <br>
 
 ![GIF](images/gan.gif) <br />
-Training Process from epoch 5 to epoch 500.
+The gif above shows our training process from epoch 5 to epoch 500. We could see that the resulting images change from random noises to clear images of cats. Around epoch 15, our images start to capture cats' features on eyes. Around epoch 100, we could easily identify that the resulting images are cats. 
 
 ## Model Evaluation - FID Score
 To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID 
