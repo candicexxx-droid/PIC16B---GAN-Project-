@@ -25,16 +25,16 @@ The above images are outputs from the generator after 500 epochs.
 <br>
 
 ![GIF](images/gan.gif) <br />
-The gif above shows our training process from epoch 5 to epoch 500. We could see that the resulting images change from random noises to clear images of cats. Around epoch 15, our images start to capture cats' features on eyes. Around epoch 100, we could easily identify that the resulting images are cats. After that, our model are modifying images' details to make it looks real.
+The gif above shows our training process from epoch 5 to epoch 500. We could see that the resulting images change from random noises to clear images of cats. Around epoch 15, our images start to capture cats' features on eyes. Around epoch 100, we could easily identify that the resulting images are cats. 
 
 ## Model Evaluation - FID Score
-To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID 
+To evaluate our GAN model, we applied the Frechet Inception Distance (FID). FID 
 was first proposed in the paper,
 [Frechet Inception Distance as described in the GANs Trained by a Two Time-Scale Update RuleConverge to a Local Nash Equilibrium](https://arxiv.org/abs/1706.08500)
-,as an improvement for Inception Score. According to the paper, the distribution 
-of real data and generated data are assumed to follow a Gaussain distribution.
+,as an improvement for Inception Score. According to the paper, the distributions 
+of real data and generated data are assumed to follow a Gaussian distribution.
 Hence, FID is a way of quantifying the difference between the two distributions.
-To calculate FID score, we first used a pretrained InceptionV3 network without 
+To calculate FID score, we first used a pre-trained InceptionV3 network without 
 the final output layer to extract features from both generated images and 
 real-world images. The formula for FID calculation, proposed by the paper, 
 is presented as follows, <br />
@@ -46,7 +46,7 @@ FID score indicates less difference between distributions generated images and
 that of real world images. 
 
 ### Exploring FID score on Training Data with Noise
-Before we dive into the FID score for generated images, following the appendix section on FID score of the paper mentioned above, we studied how FID score changes if we add different types of random noise to our own training data. We applied four types of random noise, Gaussian noise, Gaussian blur, Swirl, and random rectangles. All types of random noise are applied with different noise level, indicated by alpha. Higher alpha values indicate higher noise level. We applied 4 types of noise with different alpha values to all of our training data, and calculate the FID score for each alpha value. We plot the change of FID score versus alpha value for each noise type below. We can observe that in general, FID score increases as we increase alpha, which indicates that the distribution of data with higher noise level has a much higher difference from the original data. Python code for noise functions can be found in noise_function.py, and test.py implements noise_function.py on our training data. 
+Before we dive into the FID score for generated images, following the appendix section on FID score of the paper mentioned above, we studied how FID score changes if we add different types of random noise to our own training data. We applied four types of random noise, Gaussian noise, Gaussian blur, Swirl, and random rectangles. All types of random noise are applied with different noise levels, indicated by alpha. Higher alpha values indicate higher noise level. We applied 4 types of noise with different alpha values to all of our training data, and calculate the FID score for each alpha value. We plot the change of FID score versus alpha value for each noise type below. We can observe that in general, FID score increases as we increase alpha, which indicates that the distribution of data with higher noise level has a much higher difference from the original data. Python code for noise functions can be found in noise_function.py, and test.py implements noise_function.py on our training data. 
 ![GaussianBlur_Noise](images/Gaussian.png)
 ![Rect_Swirl](images/Swirl_Rect.png)
 
@@ -57,7 +57,7 @@ lower right: swirled images（choices of alpha: 0, 1, 2, 4）\
 The disturbance level rises from zero and increases to the highest level. The FID captures the disturbance level very well by monotonically increasing.
 
 ### Frechet Inception Distance at Intervals of 10 Epochs
-We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094.  <br />
+We want to explore how FID score improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease in FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, the lowest FID score we obtained was 466, and the FID score for our final model is 676.094.  <br />
 ![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
 
 ## Interpolation
