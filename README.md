@@ -15,36 +15,44 @@ We trained our model on a
 containing 15.7k images. Training the
 model took about 4 hours with 500 epochs.
 
-To evaluate the model we used the
-[Frechet Inception Distance as described in the GANs Trained by a Two Time-Scale Update RuleConverge to a Local Nash Equilibrium](https://arxiv.org/abs/1706.08500) paper. 
-...
-
-## Discussion
-To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID was first proposed in the paper, [Frechet Inception Distance as described in the GANs Trained by a Two Time-Scale Update RuleConverge to a Local Nash Equilibrium], as an improvement for Inception Score. According to the paper, the distribution of real data and generated data are assumed to follow a Gaussain distribution. Hence, FID is a way of quantifying the difference between the two distributions. To calculate FID score, we first used a pretrained InceptionV3 network without the final output layer to extract features from both generated images and real-world images. The formula for FID calculation, proposed by the paper,  is presented as follow, <br />
+To evaluate our GAN model, we applies the Frechet Inception Distance (FID). FID 
+was first proposed in the paper,
+[Frechet Inception Distance as described in the GANs Trained by a Two Time-Scale Update RuleConverge to a Local Nash Equilibrium](https://arxiv.org/abs/1706.08500)
+,as an improvement for Inception Score. According to the paper, the distribution 
+of real data and generated data are assumed to follow a Gaussain distribution.
+Hence, FID is a way of quantifying the difference between the two distributions.
+To calculate FID score, we first used a pretrained InceptionV3 network without 
+the final output layer to extract features from both generated images and 
+real-world images. The formula for FID calculation, proposed by the paper, 
+is presented as follows, <br />
             <img width="545" alt="Screen Shot 2021-06-08 at 8 31 18 PM" src="https://user-images.githubusercontent.com/76800486/121185296-7d6fdf80-c898-11eb-9d4e-28739a17d768.png"><br />
-where m denotes the feature-wise mean from  generated images; m_w denotes the feature-wise mean from  real-world images; C and C_w are the covariance matrices obtained by generated images and real-world images respectively. Lower FID score indicates less difference between distributions generated images and that of real world images. 
+where m denotes the feature-wise mean from  generated images; m_w denotes the
+feature-wise mean from  real-world images; C and C_w are the covariance
+matrices obtained by generated images and real-world images respectively. Lower
+FID score indicates less difference between distributions generated images and 
+that of real world images. 
 
-![GaussianBlur](fid_GaussianBlur.png)
-![GaussianNoise](fid_GaussianNoise.png)
-![Rect](fid_Rect.png)
-![Swirl](fid_Swirl.png)
+![GaussianBlur](images/fid_GaussianBlur.png)
+![GaussianNoise](images/fid_GaussianNoise.png)
+![Rect](images/fid_Rect.png)
+![Swirl](images/fid_Swirl.png)
 ### Frechet Inception Distance at Intervals of 10 Epochs
 We want to explore how FID scores improves throughout training. We saved the generator models to calculate FID scores every 10 epochs. Hence, we obtained the graph below, where we see a desirable decrease of FID score, meaning that our generated data got closer to the distribution of the training data. Throughout training, we obtained a lowest FID score, 466, and the FID score for our final model is 676.094. 
-![FID Scores per 10 Epochs](fid_scores_per_epoch.png)
+![FID Scores per 10 Epochs](images/fid_scores_per_epoch.png)
 
 
 ## Training Results
 
 ![500 epochs](epochs/Epoch_500.png)
-
 Generator output after 500 epochs.
 
-![GIF](gan.gif)
+<br>
 
+![GIF](images/gan.gif)
 Training Process from epoch 5 to epoch 500.
 
 ## Interpolation
-![interpolation](interpolation.png)
+![interpolation](images/interpolation.png)
 Observing how the model reacts to variation in the input space.
 
 ## GAN Class
