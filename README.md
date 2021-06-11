@@ -15,7 +15,12 @@ We trained our model on a
 containing 15.7k images. Training the
 model took about 4 hours with 500 epochs.
 
+## The DCGAN Model & Training Process
 
+Our DCGAN model follows the standard model structure from the DCGAN tutorial by TensorFlow. The generator model takes an input noise vector of shape (100,) and maps it to an array with same shape as the training data (64,64,3). The generator model starts with a dense layer, followed by 4 Conv2D Transpose layers that maps an input array of a smaller shape to an output array of a larger shape. The generator model can be found in the 'generator_model' method under the GAN class definition from gan.py. The discriminator model is a binary classifier that takes an input image of shape (64,64,3) and maps it to number from 0 to 1. The output value that is more closer to 1 means the input image is more likely to be a 'real' image instead of a generated one. Hence, the discriminator model is made up of 5 Conv2D layers and a final dense layer. Its definition can be found in the 'discriminator_model' method under the GAN class definiation from gan.py..
+
+The training process aims to train the generator to output images that resembles the training data as much as possible. 
+In a single training iteration, we both feed the discriminator with training images (labeled as '1') and fake images from generator (labeled as '0'). 
 
 ## Training Results
 
