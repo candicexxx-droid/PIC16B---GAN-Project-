@@ -1,5 +1,5 @@
 
-# PIC16B GAN Project
+# PIC16B GAN Project - Implementation of Generative Adversarial Neural Network (GAN) on Cat Dataset
 
 ## Overview
 Our project implements a deep convolutional adversarial network (DCGAN) using
