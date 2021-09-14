@@ -1,6 +1,8 @@
 
 # PIC16B GAN Project - Implementation of Generative Adversarial Neural Network (GAN) on Cat Dataset
 
+### By Keith Ontiveros, Candice Cai,Sylvia Ma
+
 ## Overview
 Our project implements a deep convolutional adversarial network (DCGAN) using
 the keras library. The DCGAN is made by creating a generator and discriminator
